@@ -2,22 +2,22 @@ let tasks = [{
     title: 'First Task',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sagittis, nulla ac posuere ullamcorper, lectus metus commodo libero, id pulvinar est turpis non mi.',
     done: true,
-    dueDate: '30/08/2020'
+    dueDate: '2021-07-30'
 }, {
     title: 'Second Task',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sagittis, nulla ac posuere ullamcorper, lectus metus commodo libero, id pulvinar est turpis non mi.',
     done: false,
-    dueDate: '30/08/2020'
+    dueDate: '2021-07-30'
 }, {
     title: 'Third Task',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sagittis, nulla ac posuere ullamcorper, lectus metus commodo libero, id pulvinar est turpis non mi.',
     done: true,
-    dueDate: '30/08/2020'
+    dueDate: '2021-07-30'
 }, {
     title: 'Fourth Task',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sagittis, nulla ac posuere ullamcorper, lectus metus commodo libero, id pulvinar est turpis non mi.',
+    description: '',
     done: false,
-    dueDate: '30/08/2020'
+    dueDate: '2021-07-30'
 }]
 
 const tasksSectionElement = document.querySelector('.tasks')
@@ -28,26 +28,27 @@ function showTasks(task){
 
     console.log(title);
 
-    let titleElement = `<h2 class="task-title">${title}</h2>`;
-    let doneElement = `<div class="task-done"> ${showCheckbox(done)}</div>`;
     let descriptionElement = `<p class="task-description">${description}</p>`;
-    let dueDateElement = `<p class="task-due-date">Planned for ${dueDate}</p>`;
+    let dueDateElement = `<span class="task-due-date">${dueDate}</span>`;
+    let doneElement = `<label><input type="checkbox" name="done" ${done ? 'checked' : ''}>${title}</label>`
 
     let singleTask = `<div class="single-task">
-        ${titleElement}
-        ${doneElement}
-        ${descriptionElement}
+        <div class="task-title">${doneElement}</div>
         ${dueDateElement}
+        ${descriptionElement}
     </div>`
+    hasMissedTask(dueDate)
 
     tasksSectionElement.innerHTML += singleTask
 }
-function showCheckbox(done) {
-    let checked = `<input type="checkbox" id="tasks-checkbox-done" name="done" checked>
-    <label for="done">Done</label>`
-    let notChecked = `<input type="checkbox" id="tasks-checkbox-done" name="done">
-    <label for="done">Done</label>`
-    return done ? checked : notChecked 
+function hasMissedTask (dueDate){
+    console.log(new Date(dueDate));
+    let isOverdue = new Date(dueDate) < new Date()
+     if (isOverdue) {
+        return `<span class="task-due-date-overdue">${dueDate}</span>`
+    } else {
+        return `<span class="task-due-date">${dueDate}</span>`
+    }
 }
 
 tasks.forEach(showTasks)
