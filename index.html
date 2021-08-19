@@ -7,44 +7,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TodoList</title>
     <style>
-        .tasks{
+        .single-task {
             display: grid;
             grid-template-columns: auto auto;
             grid-template-areas:
                 "title done"
                 "description description"
                 ". due-date";
-        }
-        .task-title{
-            grid-area: title;
-        }
-        .task-done{
-            grid-area: done;
-        }
-        .task-descriptions{
-            grid-area: description;
-        }
-        .task-due-date{
-            grid-area: due-date;
+            
         }
 
+        .task-title {
+            grid-area: title;
+        }
+
+        .task-done {
+            grid-area: done;
+            align-self: center;
+            justify-self: center;
+        }
+
+        .task-descriptions {
+            grid-area: description;
+        }
+
+        .task-due-date {
+            grid-area: due-date;
+        }
     </style>
 </head>
 
 <body>
     <h1>TodoList</h1>
-    <section class="tasks">
-        <h2 class="task-title"></h2>
-
-        <div class="task-done">
-        <!-- <input type="checkbox" id="tasks-checkbox-done" name="done" checked>
-             <label for="done">Done</label>
-         -->
-        </div>
-        <p class="task-description"></p>
-        <p class="task-due-date"></p>
-
-    </section>
+    <section class="tasks"></section>
     <script src="script.js"></script>
 </body>
 

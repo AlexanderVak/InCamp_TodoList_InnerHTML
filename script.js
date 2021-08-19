@@ -1,37 +1,46 @@
 let tasks = [{
     title: 'First Task',
-    description: '',
-    done: false,
-    dueDate: ''
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sagittis, nulla ac posuere ullamcorper, lectus metus commodo libero, id pulvinar est turpis non mi.',
+    done: true,
+    dueDate: '30/08/2020'
 }, {
     title: 'Second Task',
-    description: '',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sagittis, nulla ac posuere ullamcorper, lectus metus commodo libero, id pulvinar est turpis non mi.',
     done: false,
-    dueDate: ''
+    dueDate: '30/08/2020'
 }, {
     title: 'Third Task',
-    description: '',
-    done: false,
-    dueDate: ''
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sagittis, nulla ac posuere ullamcorper, lectus metus commodo libero, id pulvinar est turpis non mi.',
+    done: true,
+    dueDate: '30/08/2020'
 }, {
     title: 'Fourth Task',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sagittis, nulla ac posuere ullamcorper, lectus metus commodo libero, id pulvinar est turpis non mi.',
     done: false,
-    dueDate: '2021-08-30'
+    dueDate: '30/08/2020'
 }]
 
-const titleElement = document.querySelector('.task-title');
-const descriptionElement = document.querySelector('.task-description');
-const doneElement = document.querySelector('.task-done')
-const dueDateElement = document.querySelector('.task-due-date')
+const tasksSectionElement = document.querySelector('.tasks')
+
 
 function showTasks(task){
     const {title, description, done, dueDate} = task
+
     console.log(title);
-    titleElement.innerHTML = title;
-    descriptionElement.innerHTML = description;
-    doneElement.innerHTML = showCheckbox() ;
-    dueDateElement.innerHTML = dueDate;
+
+    let titleElement = `<h2 class="task-title">${title}</h2>`;
+    let doneElement = `<div class="task-done"> ${showCheckbox(done)}</div>`;
+    let descriptionElement = `<p class="task-description">${description}</p>`;
+    let dueDateElement = `<p class="task-due-date">Planned for ${dueDate}</p>`;
+
+    let singleTask = `<div class="single-task">
+        ${titleElement}
+        ${doneElement}
+        ${descriptionElement}
+        ${dueDateElement}
+    </div>`
+
+    tasksSectionElement.innerHTML += singleTask
 }
 function showCheckbox(done) {
     let checked = `<input type="checkbox" id="tasks-checkbox-done" name="done" checked>
