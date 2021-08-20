@@ -1,19 +1,23 @@
-let tasks = [{
+const tasks = [{
+    id:1,
     title: 'First Task',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sagittis, nulla ac posuere ullamcorper, lectus metus commodo libero, id pulvinar est turpis non mi.',
     done: true,
     dueDate: '2021-07-30'
 }, {
+    id:2,
     title: 'Second Task',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sagittis, nulla ac posuere ullamcorper, lectus metus commodo libero, id pulvinar est turpis non mi.',
     done: false,
     dueDate: '2021-07-30'
 }, {
+    id:3,
     title: 'Third Task',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sagittis, nulla ac posuere ullamcorper, lectus metus commodo libero, id pulvinar est turpis non mi.',
     done: true,
     dueDate: '2021-07-30'
 }, {
+    id:4,
     title: 'Fourth Task',
     description: '',
     done: false,
@@ -21,34 +25,90 @@ let tasks = [{
 }]
 
 const tasksSectionElement = document.querySelector('.tasks')
+function createTask(task) {
+    const { title, description, done, dueDate } = task
 
+    const singleTask = document.createElement('div')
+    singleTask.classList.add('single-task')
+    singleTask.append(
+        createHeading(done, title),
+        createDueDate(dueDate, done),
+        createDescription(description),
+        createDeleteBtn()
+    )
+    singleTask.id = task.id;
 
-function showTasks(task){
-    const {title, description, done, dueDate} = task
-
-    console.log(title);
-
-    let descriptionElement = `<p class="task-description">${description}</p>`;
-    let dueDateElement = `<span class="task-due-date">${dueDate}</span>`;
-    let doneElement = `<label><input type="checkbox" name="done" ${done ? 'checked' : ''}>${title}</label>`
-
-    let singleTask = `<div class="single-task">
-        <div class="task-title">${doneElement}</div>
-        ${dueDateElement}
-        ${descriptionElement}
-    </div>`
-    hasMissedTask(dueDate)
-
-    tasksSectionElement.innerHTML += singleTask
+    tasksSectionElement.appendChild(singleTask)
+    return singleTask
 }
-function hasMissedTask (dueDate){
-    console.log(new Date(dueDate));
-    let isOverdue = new Date(dueDate) < new Date()
-     if (isOverdue) {
-        return `<span class="task-due-date-overdue">${dueDate}</span>`
-    } else {
-        return `<span class="task-due-date">${dueDate}</span>`
+
+let createHeading = (done, titleText) => {
+    let heading = document.createElement('div')
+    heading.classList.add('task-title')
+    heading.append(createCheckbox(done),createTitle(done, titleText))
+    return heading
+}
+
+let createTitle = (done, titleText) => {
+
+    let title = document.createElement('label')
+    if (done) {
+        title.classList.toggle('task-overdue')
     }
+
+    title.innerHTML += titleText
+    return title
 }
 
-tasks.forEach(showTasks)
+function deleteTask() {
+    let singleTask = this.parentNode
+    let currentTaskId = tasks.findIndex(task => task.id === +singleTask.id)
+    tasks.splice(currentTaskId, 1)
+    singleTask.remove()    
+}
+
+let createDeleteBtn = () => {
+    let deleteBtn = document.createElement('button')
+    deleteBtn.innerHTML = 'Delete'
+    deleteBtn.onclick = deleteTask
+    return deleteBtn
+}
+function changeStatus () {
+    let singleTaskDiv = this.parentNode.parentNode
+    // console.log(taskTitleDiv)
+    // console.log(singleTaskDiv.parentNode);
+    let currentTask = tasks.find(task => task.id === +singleTaskDiv.id)
+    currentTask.done = !currentTask.done
+    singleTaskDiv.parentNode.replaceChild(createTask(currentTask), singleTaskDiv)
+}
+let createCheckbox = (done) => {
+    let checkbox = document.createElement('input')
+    checkbox.type = 'checkbox'
+    checkbox.name = 'done'
+    if (done) {
+        checkbox.setAttribute('checked', true)
+    }
+    checkbox.onclick = changeStatus
+    return checkbox
+}
+
+let createDescription = (descriptionText) => {
+    let description = document.createElement('p')
+    description.classList.add('task-description')
+    description.innerHTML = descriptionText
+
+    return description
+}
+
+let createDueDate = (date, done) => {
+    let dueDate = document.createElement('p')
+    dueDate.innerHTML = date
+
+    let isOverdue = new Date(date) < new Date()
+    if (isOverdue && !done) {
+        dueDate.classList.add('task-due-date-overdue')
+    }
+    return dueDate
+}
+
+tasks.forEach(createTask)
