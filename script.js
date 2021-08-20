@@ -25,6 +25,8 @@ const tasks = [{
 }]
 
 const tasksSectionElement = document.querySelector('.tasks')
+const regimeElement = document.getElementById('regime')
+
 function createTask(task) {
     const { title, description, done, dueDate } = task
 
@@ -58,6 +60,19 @@ let createTitle = (done, titleText) => {
 
     title.innerHTML += titleText
     return title
+}
+
+function showFinnishedTasks() {
+    tasksSectionElement.replaceChildren()
+
+    // let doneTasks = tasks.filter(task => task.done === true)
+    // doneTasks.forEach()
+    regimeElement.innerHTML = 'You are on Show Finnished tasks regime'
+    tasks.forEach(task => {
+        if(task.done === true){
+            createTask(task)
+        }
+    })
 }
 
 function deleteTask() {
@@ -111,4 +126,9 @@ let createDueDate = (date, done) => {
     return dueDate
 }
 
-tasks.forEach(createTask)
+function showAll() {
+    tasksSectionElement.replaceChildren()
+    regimeElement.innerHTML = 'You are on Show All regime'
+    tasks.forEach(createTask)
+}
+showAll()
