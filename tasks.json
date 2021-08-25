@@ -1,0 +1,18 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "title": "First Task",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sagittis, nulla ac posuere ullamcorper, lectus metus commodo libero, id pulvinar est turpis non mi.",
+      "done": true,
+      "dueDate": "2021-07-30"
+    },
+    {
+      "id": 3,
+      "title": "Third Task",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sagittis, nulla ac posuere ullamcorper, lectus metus commodo libero, id pulvinar est turpis non mi.",
+      "done": true,
+      "dueDate": "2021-07-30"
+    }
+  ]
+}
