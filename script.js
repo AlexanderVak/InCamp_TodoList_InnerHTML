@@ -51,51 +51,6 @@ let createHeading = (done, titleText) => {
     return heading
 }
 
-let createTitle = (done, titleText) => {
-
-    let title = document.createElement('label')
-    if (done) {
-        title.classList.toggle('task-overdue')
-    }
-
-    title.innerHTML += titleText
-    return title
-}
-
-function showFinnishedTasks() {
-    tasksSectionElement.replaceChildren()
-
-    // let doneTasks = tasks.filter(task => task.done === true)
-    // doneTasks.forEach()
-    regimeElement.innerHTML = 'You are on Show Finnished tasks regime'
-    tasks.forEach(task => {
-        if(task.done === true){
-            createTask(task)
-        }
-    })
-}
-
-function deleteTask() {
-    let singleTask = this.parentNode
-    let currentTaskId = tasks.findIndex(task => task.id === +singleTask.id)
-    tasks.splice(currentTaskId, 1)
-    singleTask.remove()    
-}
-
-let createDeleteBtn = () => {
-    let deleteBtn = document.createElement('button')
-    deleteBtn.innerHTML = 'Delete'
-    deleteBtn.onclick = deleteTask
-    return deleteBtn
-}
-function changeStatus () {
-    let singleTaskDiv = this.parentNode.parentNode
-    // console.log(taskTitleDiv)
-    // console.log(singleTaskDiv.parentNode);
-    let currentTask = tasks.find(task => task.id === +singleTaskDiv.id)
-    currentTask.done = !currentTask.done
-    singleTaskDiv.parentNode.replaceChild(createTask(currentTask), singleTaskDiv)
-}
 let createCheckbox = (done) => {
     let checkbox = document.createElement('input')
     checkbox.type = 'checkbox'
@@ -105,6 +60,15 @@ let createCheckbox = (done) => {
     }
     checkbox.onclick = changeStatus
     return checkbox
+}
+
+let createTitle = (done, titleText) => {
+    let title = document.createElement('label')
+    if (done) {
+        title.classList.toggle('task-overdue')
+    }
+    title.innerHTML += titleText
+    return title
 }
 
 let createDescription = (descriptionText) => {
@@ -126,9 +90,49 @@ let createDueDate = (date, done) => {
     return dueDate
 }
 
+let createDeleteBtn = () => {
+    let deleteBtn = document.createElement('button')
+    deleteBtn.innerHTML = 'Delete'
+    deleteBtn.onclick = deleteTask
+    return deleteBtn
+}
+
+function deleteTask() {
+    let singleTask = this.parentNode
+    let currentTaskId = tasks.findIndex(task => task.id === +singleTask.id)
+    tasks.splice(currentTaskId, 1)
+    singleTask.remove()    
+}
+
+function changeStatus (event) {
+    console.log(event.target.parentNode);
+    console.log(regimeElement.innerText);
+    let singleTaskDiv = this.parentNode.parentNode
+
+    let currentTask = tasks.find(task => task.id === +singleTaskDiv.id)
+    currentTask.done = !currentTask.done
+    if (regimeElement.innerText === 'All tasks') {
+        singleTaskDiv.parentNode.replaceChild(createTask(currentTask), singleTaskDiv)
+    } else {
+        singleTaskDiv.remove()
+    }
+
+    
+}
+
+function showFinnishedTasks() {
+    tasksSectionElement.replaceChildren()
+    regimeElement.innerHTML = 'Finnished tasks'
+    tasks.forEach(task => {
+        if(task.done){
+            createTask(task)
+        }
+    })
+}
+
 function showAll() {
     tasksSectionElement.replaceChildren()
-    regimeElement.innerHTML = 'You are on Show All regime'
+    regimeElement.innerHTML = 'All tasks'
     tasks.forEach(createTask)
 }
 showAll()
