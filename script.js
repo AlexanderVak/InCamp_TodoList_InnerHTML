@@ -1,31 +1,49 @@
+const increment = (init = 4) => () => ++init
+const genId = increment()
 const tasks = [{
     id:1,
     title: 'First Task',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sagittis, nulla ac posuere ullamcorper, lectus metus commodo libero, id pulvinar est turpis non mi.',
     done: true,
-    dueDate: '2021-07-30'
+    dueDate: new Date ('2021-07-30')
 }, {
     id:2,
     title: 'Second Task',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sagittis, nulla ac posuere ullamcorper, lectus metus commodo libero, id pulvinar est turpis non mi.',
     done: false,
-    dueDate: '2021-07-30'
+    dueDate: new Date ('2021-07-30')
 }, {
     id:3,
     title: 'Third Task',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sagittis, nulla ac posuere ullamcorper, lectus metus commodo libero, id pulvinar est turpis non mi.',
     done: true,
-    dueDate: '2021-07-30'
+    dueDate: new Date ('2021-07-30')
 }, {
     id:4,
     title: 'Fourth Task',
     description: '',
     done: false,
-    dueDate: '2021-07-30'
+    dueDate: new Date ('2021-07-30')
 }]
 
 const tasksSectionElement = document.querySelector('.tasks')
 const regimeElement = document.getElementById('regime')
+let taskForm = document.forms['tasks-input']
+
+taskForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const formData = new FormData(taskForm); 
+    const taskRaw = Object.fromEntries(formData.entries())
+    let task  = {
+        id: genId(),
+        ...taskRaw,
+        done: false,
+        dueDate: new Date(taskRaw.dueDate)
+    }
+    tasks.push(task);
+    showAll()
+    taskForm.reset()
+})
 
 function createTask(task) {
     const { title, description, done, dueDate } = task
@@ -81,9 +99,10 @@ let createDescription = (descriptionText) => {
 
 let createDueDate = (date, done) => {
     let dueDate = document.createElement('p')
-    dueDate.innerHTML = date
 
-    let isOverdue = new Date(date) < new Date()
+    dueDate.innerHTML = date.toLocaleDateString('uk')
+
+    let isOverdue = date < new Date()
     if (isOverdue && !done) {
         dueDate.classList.add('task-due-date-overdue')
     }
@@ -105,8 +124,6 @@ function deleteTask() {
 }
 
 function changeStatus (event) {
-    console.log(event.target.parentNode);
-    console.log(regimeElement.innerText);
     let singleTaskDiv = this.parentNode.parentNode
 
     let currentTask = tasks.find(task => task.id === +singleTaskDiv.id)
@@ -115,9 +132,7 @@ function changeStatus (event) {
         singleTaskDiv.parentNode.replaceChild(createTask(currentTask), singleTaskDiv)
     } else {
         singleTaskDiv.remove()
-    }
-
-    
+    }    
 }
 
 function showFinnishedTasks() {
@@ -133,6 +148,8 @@ function showFinnishedTasks() {
 function showAll() {
     tasksSectionElement.replaceChildren()
     regimeElement.innerHTML = 'All tasks'
+    console.log(tasks);
     tasks.forEach(createTask)
 }
+
 showAll()

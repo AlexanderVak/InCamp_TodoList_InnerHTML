@@ -33,6 +33,12 @@
 
 <body>
     <h1>TodoList</h1>
+    <form name="tasks-input">
+        <input type="text" name="title" placeholder="Title" required>
+        <input type="text" name="description" placeholder="Description">
+        <input type="date" name="dueDate">
+        <button type="submit">Add Task</button>
+    </form>
     <div>
         <button onclick="showAll()">Show All</button>
         <button onclick="showFinnishedTasks()">Show Finnished Tasks</button>
