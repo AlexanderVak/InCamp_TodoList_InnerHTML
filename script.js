@@ -1,46 +1,21 @@
-const increment = (init = 4) => () => ++init
-const genId = increment()
-const tasks = [{
-    id:1,
-    title: 'First Task',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sagittis, nulla ac posuere ullamcorper, lectus metus commodo libero, id pulvinar est turpis non mi.',
-    done: true,
-    dueDate: new Date ('2021-07-30')
-}, {
-    id:2,
-    title: 'Second Task',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sagittis, nulla ac posuere ullamcorper, lectus metus commodo libero, id pulvinar est turpis non mi.',
-    done: false,
-    dueDate: new Date ('2021-07-30')
-}, {
-    id:3,
-    title: 'Third Task',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sagittis, nulla ac posuere ullamcorper, lectus metus commodo libero, id pulvinar est turpis non mi.',
-    done: true,
-    dueDate: new Date ('2021-07-30')
-}, {
-    id:4,
-    title: 'Fourth Task',
-    description: '',
-    done: false,
-    dueDate: new Date ('2021-07-30')
-}]
-
 const tasksSectionElement = document.querySelector('.tasks')
-const regimeElement = document.getElementById('regime')
+const stateElement = document.getElementById('state')
+const tasksEndpoint = 'http://localhost:3000/tasks'
+
 let taskForm = document.forms['tasks-input']
 
 taskForm.addEventListener('submit', (event) => {
     event.preventDefault();
     const formData = new FormData(taskForm); 
     const taskRaw = Object.fromEntries(formData.entries())
+    getTasks()
+        .then(tas)
     let task  = {
         id: genId(),
         ...taskRaw,
         done: false,
         dueDate: new Date(taskRaw.dueDate)
     }
-    tasks.push(task);
     showAll()
     taskForm.reset()
 })
@@ -100,9 +75,9 @@ let createDescription = (descriptionText) => {
 let createDueDate = (date, done) => {
     let dueDate = document.createElement('p')
 
-    dueDate.innerHTML = date.toLocaleDateString('uk')
+    dueDate.innerHTML = new Date(date).toLocaleDateString('uk')
 
-    let isOverdue = date < new Date()
+    let isOverdue = new Date(date) < new Date()
     if (isOverdue && !done) {
         dueDate.classList.add('task-due-date-overdue')
     }
@@ -118,38 +93,70 @@ let createDeleteBtn = () => {
 
 function deleteTask() {
     let singleTask = this.parentNode
-    let currentTaskId = tasks.findIndex(task => task.id === +singleTask.id)
-    tasks.splice(currentTaskId, 1)
-    singleTask.remove()    
+    getCurrentTask(singleTask)
+        .then(currenTask => {
+            fetchWrapper(`${tasksEndpoint}/${currenTask.id}`, 'DELETE', currenTask)
+                .then(() => singleTask.remove())
+        })
 }
 
-function changeStatus (event) {
+function changeStatus () {
     let singleTaskDiv = this.parentNode.parentNode
+    getCurrentTask(singleTaskDiv)
+        .then(currentTask => {
+            fetchWrapper(`${tasksEndpoint}/${currentTask.id}`, 'PATCH', {done: !currentTask.done})
+                .then(task => {
+                    if (stateElement.innerText === 'All tasks') {
+                        singleTaskDiv.parentNode.replaceChild(createTask(task), singleTaskDiv)                    
+                    } else {
+                        singleTaskDiv.remove()
+                    } 
+                })
 
-    let currentTask = tasks.find(task => task.id === +singleTaskDiv.id)
-    currentTask.done = !currentTask.done
-    if (regimeElement.innerText === 'All tasks') {
-        singleTaskDiv.parentNode.replaceChild(createTask(currentTask), singleTaskDiv)
-    } else {
-        singleTaskDiv.remove()
-    }    
+        })
 }
 
 function showFinnishedTasks() {
     tasksSectionElement.replaceChildren()
-    regimeElement.innerHTML = 'Finnished tasks'
-    tasks.forEach(task => {
-        if(task.done){
-            createTask(task)
-        }
-    })
+    stateElement.innerHTML = 'Finnished tasks'
+    getTasks()
+        .then(tasks => {
+            tasks.forEach(task => {
+                if(task.done){
+                    createTask(task)
+                }
+            })
+        })
 }
 
 function showAll() {
     tasksSectionElement.replaceChildren()
-    regimeElement.innerHTML = 'All tasks'
-    console.log(tasks);
-    tasks.forEach(createTask)
+    stateElement.innerHTML = 'All tasks'
+
+    getTasks()
+        .then(tasks => tasks.forEach(createTask))
 }
 
+function fetchWrapper(path, method, task){
+    return fetch(path, {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(task)
+    })
+    .then(res => res.json())
+}
+
+function getTasks() {
+    return fetch(tasksEndpoint)
+        .then(res => res.json())
+}
+function getCurrentTask(singleTask) {
+     return getTasks()
+        .then(tasks => tasks.find(task => task.id === +singleTask.id))
+}
 showAll()
+
+
+
