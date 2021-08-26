@@ -8,16 +8,9 @@ taskForm.addEventListener('submit', (event) => {
     event.preventDefault();
     const formData = new FormData(taskForm); 
     const taskRaw = Object.fromEntries(formData.entries())
-    getTasks()
-        .then(tas)
-    let task  = {
-        id: genId(),
-        ...taskRaw,
-        done: false,
-        dueDate: new Date(taskRaw.dueDate)
-    }
-    showAll()
-    taskForm.reset()
+    fetchWrapper(tasksEndpoint, 'POST', taskRaw)
+        .then(showAllTasks)
+        .then(() => taskForm.reset())
 })
 
 function createTask(task) {
@@ -98,18 +91,19 @@ function deleteTask() {
             fetchWrapper(`${tasksEndpoint}/${currenTask.id}`, 'DELETE', currenTask)
                 .then(() => singleTask.remove())
         })
+        // catch reject 
 }
 
 function changeStatus () {
-    let singleTaskDiv = this.parentNode.parentNode
-    getCurrentTask(singleTaskDiv)
+    let singleTask = this.parentNode.parentNode
+    getCurrentTask(singleTask)
         .then(currentTask => {
             fetchWrapper(`${tasksEndpoint}/${currentTask.id}`, 'PATCH', {done: !currentTask.done})
                 .then(task => {
                     if (stateElement.innerText === 'All tasks') {
-                        singleTaskDiv.parentNode.replaceChild(createTask(task), singleTaskDiv)                    
+                        singleTask.parentNode.replaceChild(createTask(task), singleTask)                    
                     } else {
-                        singleTaskDiv.remove()
+                        singleTask.remove()
                     } 
                 })
 
@@ -121,15 +115,11 @@ function showFinnishedTasks() {
     stateElement.innerHTML = 'Finnished tasks'
     getTasks()
         .then(tasks => {
-            tasks.forEach(task => {
-                if(task.done){
-                    createTask(task)
-                }
-            })
+            tasks.filter(task => task.done)
         })
 }
 
-function showAll() {
+function showAllTasks() {
     tasksSectionElement.replaceChildren()
     stateElement.innerHTML = 'All tasks'
 
@@ -156,7 +146,7 @@ function getCurrentTask(singleTask) {
      return getTasks()
         .then(tasks => tasks.find(task => task.id === +singleTask.id))
 }
-showAll()
+showAllTasks()
 
 
 

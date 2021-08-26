@@ -13,6 +13,13 @@
       "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sagittis, nulla ac posuere ullamcorper, lectus metus commodo libero, id pulvinar est turpis non mi.",
       "done": true,
       "dueDate": "2021-07-30"
+    },
+    {
+      "title": "Task from input",
+      "description": "There is description for task from entries",
+      "dueDate": "2021-08-26",
+      "id": 4,
+      "done": false
     }
   ]
 }
